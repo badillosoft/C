@@ -446,7 +446,9 @@ c3.siguiente = NULL;
 
 Observemos que creamos tres cajas `c1`, `c2` y `c3`, luego les asignamos un valor a cada caja.
 
-Si las variables fueran declaradas como punteros debemos tener cuidado de utilizar el operador `->`, de lo contrario en lugar de hacer `c1->valor`, su equivalente sería lo siguiente: `c1->siguiente` es equivalente a `(*c1).siguiente`.
+Si las variables fueran declaradas como punteros debemos tener cuidado de utilizar el operador `->`,
+de lo contrario en lugar de hacer `c1->valor`, su equivalente sería lo siguiente: `c1->siguiente` es
+equivalente a `(*c1).siguiente`.
 
 Observamos que la caja `c3` no tiene ninguna caja siguiente, esto significa que nuestra pila queda más o menos
 así: [c1]->[c2]->[c3].
@@ -515,3 +517,93 @@ void imprimir(struct Caja *c) {
 	imprimir(c->siguiente);
 }
 ~~~
+
+## II.5 Problemas
+
+### Problema 1
+
+El siguiente código crea un arreglo con 10 elementos:
+
+~~~c
+int arreglo[] = {1, 3, 5, 7, 9, 11, 13, 15, 17, 19};
+~~~
+
+Explicar que es lo que hace el siguiente código y averiguar el por qué.
+
+~~~c
+printf ("%d\n", *arreglo);
+printf ("%d\n", *(arreglo + 1));
+printf ("%d\n", *(arreglo + 2));
+printf ("%d\n", *(arreglo + 3));
+printf ("%d\n", *(arreglo + 4));
+
+printf ("---------------------\n");
+
+int* p = arreglo;
+
+printf ("%d\n", p[0]);
+printf ("%d\n", p[1]);
+printf ("%d\n", p[2]);
+printf ("%d\n", p[3]);
+printf ("%d\n", p[4]);
+~~~
+
+### Problema 2
+
+El siguiente código muestra como enviar un arreglo a una función.
+
+~~~c
+void foo(int *arreglo, int n) {
+    int i;
+    for (i = 0; i < n; i++) {
+        printf ("[%d] ", arreglo[i]);
+    }
+    printf ("\n");
+}
+~~~
+
+Crear un arreglo con 10 elementos (ver `Problema 1`) y mandar a llamar a `foo` con el arreglo y el tamaño del arreglo
+e indicar que pasa.
+
+## Problema 3
+
+Modificar el código del `Problema 2` para que imprima el arreglo de la posición `i` a la posición `j`, por ejemplo,
+si se llama a `foo(arreglo, 2, 6)` debaría imprimir las posiciones 2, 3, 4, 5, 6 del arreglo.
+
+# Problema 4
+
+El siguiente código muestra como crear un arreglo dinámico de 10 elementos.
+
+~~~c
+int* arreglo = ( int* ) malloc( 10 * sizeof( int ) );
+~~~
+
+Eso es equivalente a escribir `int arreglo[10]`. Sin embargo, la ventaja de que el arreglo sea dinámico es que
+podemos liberarlo cuando ya no lo utilicemos y crearlo nuevamente cuando vayamos a utilizarlo.
+
+Para eliminar un arreglo dinámico hacemos `free(arreglo)`.
+
+Las siguientes funciones nos ayudan a crear y eliminar arreglos:
+
+~~~c
+int* crear_arreglo(int n) {
+    int* arreglo = ( int* ) malloc( n * sizeof(int) );
+    
+    return arreglo; 
+}
+
+void eliminar_arreglo(int* arreglo) {
+    free(arreglo);
+}
+~~~
+
+Utilizar la función `crear_arreglo` para crear un arreglo de 10 elementos. Asignar cada elementos
+con los siguientes valores: 0 -> 0, 1 -> 1, 2 -> 8, 3 -> 27, 4 -> 64, 5 -> 125,
+6 -> 216, 7 -> 342, 8 -> 512, 9 -> 729, 10 -> 1000. Imprimir el arreglo utilizando la función `foo` del `Problema 2`.
+
+## Problema 5
+
+Crear una función llamada `int* slice(int* arreglo, int s, int e)` y devuelva un nuevo arreglo de tamaño `e - s + 1`
+que contenga los elementos del arreglo desde la posición `s` hasta la `e`.
+
+Por ejemplo, si `arreglo: 1 3 5 7 9 11 13 15`, entonces `slice(arreglo, 2, 6): 5 7 9 11 13`.
