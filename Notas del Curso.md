@@ -256,3 +256,262 @@ de 2 o multiplos de 3.
 
 > Hint: Para evaluar dos condiciones que se cumpla una u otra hacemos por ejemplo
 `if (condición1 || condición2) { ... }`.
+
+# Parte II - Arreglos, Punteros y Estructuras
+
+## II.1 Arreglos
+
+Los arreglos son variables que permiten almacenar repetidamente valores de un mismo, accediendo a dichos
+valores mediante un único nombre.
+
+> Sintaxis `tipo nombre[tamaño];`
+
+La sintaxis anterior se refiere a un arreglo de tamaño fijo lo que quiere decir que durante todo el programa
+se reservará el espacio correspondiente para dicho arreglo.
+
+Si queremos inicializar directamente el arreglo hacemos `tipo nombre[] = {valor0, valor1, ..., valorN}`, entonces
+se creará el arreglo con el tamaño correspondiente y los valores dados.
+
+Para acceder al valor del arreglo en un posición hacemos `valor = arraglo[indice];` donde el índice debe estar en
+el rango válido desde 0 hasta el tamaño del arreglo menos 1.
+
+Para calcular cuantos elementos se definieron en el arreglo hacemos `tamano = sizeof(arreglo) / sizeof(tipo);` es importante
+dividir el valor entre el tamaño del tipo de dato. Esto hace que calcule los bytes reservados por el arreglo
+entre los bytes que mide el tipo de dato.
+
+Finalmente el siguiente código recorre el arreglo e imprime sus valores:
+
+~~~c
+int i;
+for (i = 0; i < sizeof(arreglo) / sizeof(int); i++) {
+    printf("%d ", arreglo[i]);
+}
+~~~ 
+
+Lo mejor es guardar el tamaño del arreglo en una variable para no estarlo calculando a cada momento.
+
+## II.2 Punteros
+
+Un puntero es una variable que guarda la dirección de memoria de otra variable, esto significa que el valor
+del puntero es una referencia en memoria a otra variable. La utilidad de los punteros reside en llamar a funciones
+con paso de parámetros por referencia, crear estructuras con variables dinámicas y crear arreglos de tamaño dinámico.
+
+Un puntero está asociado a un tipo de dato, por lo tanto no puede contener referencias a variables de otro tipo. El
+puntero puede ser guardado a su vez en un doble puntero y así.
+
+> Sintaxis: `tipo *nombre;`
+
+> Declaración e inicialización: `tipo *nombre = &variable;`
+
+Observemos que los punteros son igualados a `&variable`, esto significa en realidad que estamos accediendo a la dirección
+de memoria de `variable`.
+
+Podemos imprimir la dirección de memoria de una variable con `printf("%p", &variable)` equivalente a `printf("%p", puntero)`.
+
+Para recuperar el valor de la variable referida al puntero hacemos `valor = *puntero;` esto hará que el puntero acceda
+al valor guardado en la dirección de memoria que tiene asociada `puntero`.
+
+Si queremos modificar el valor de la dirección de memoria asociada al puntero hacemos `*puntero = nevo_valor;` esto hace
+que el puntero cambie el valor en la dirección de memoria que tiene asociada `puntero`;
+
+> Ejemplo: Asociar al puntero la variable que tiene el número mayor.
+
+~~~c
+int a = 2, b = 8;
+
+int *p; // Declaramos un puntero sin variable asociada
+
+if (a > b) {
+    p = &a; // Asociamos la dirección de `a` porque es el mayor
+} else {
+    p = &b; // Asociamos la dirección de `b` porque es el mayor
+}
+
+// Imprimimos el valor de la variable asociada a `p`, si `a` fuera mayor
+// imprimiria el valor de `a`, si `b` fuera mayor imprimiria el valor de `b`  
+printf("El numero mayor es %d", *p);
+~~~
+
+## II.3 Estructuras
+
+Las estructuras son tipos de datos compuestos por otros datos ya existentes (o la misma estructura). Esto permite
+que el usuario pueda definir sus propios tipos de datos complejos.
+
+> Sintaxis
+
+~~~c
+struct Nombre {
+    tipo1 nombre1;
+    tipo2 nombre2;
+    ...
+    tipoN nombreN;
+};
+~~~
+
+> Ejemplo: Contruimos una estructura llamada `Punto` la cual se compone de dos variables
+de tipo entero `x` y `y`.
+
+~~~c
+struct Punto {
+    int x;
+    int y;
+};
+~~~
+
+Para usar la estructura debemos declarar variables del tipo de la estructura.
+
+> Sintaxis `struct Estructura variable;`
+
+> Ejemplo: Creamos dos variables `p` y `q` del tipo `struct Punto`.
+
+~~~c
+struct Punto {
+    int x;
+    int y;
+};
+
+int main()  {
+    struct Punto p;
+    struct Punto q;
+    
+    return 0;
+}
+~~~
+
+Para acceder a las variables dentro dentro de la estructura hacemos `estructura.variable = valor;` o
+`valor = estructura.variable`;
+
+> Ejemplo: Crear dos puntos `p` y `q`, asignarlos e imprimirlos.
+
+~~~c
+struct Punto p;
+struct Punto q;
+
+p.x = 10;
+p.y = 20;
+
+q.x = 2;
+q.y = -8;
+
+printf("P (%d, %d) ", p.x, p.y);
+printf("Q (%d, %d) ", q.x, q.y);
+~~~
+
+## II.4 Aplicación de Estructuras y Punteros
+
+Una _pila_ es una estructura de datos que nos permite ir acumulando variables, mejor dicho irlas apilando
+como si se trataran de platos, la una _pila_ de platos va encimando uno tras otro y para recuperar un plato
+de abajo tenemos que desapilar los de arriba. Entonces cada plato tiene referencia al plato superior a el.
+El primer plato colocado se conoce como la cabeza y el último como la cola. Nosotros debemos tener siempre
+referencia a la cola.
+
+El siguiente código muestra una pila que acumula valores de tipo entero:
+
+~~~c
+struct Pila {
+    int valor;
+    struct Pila *siguiente;
+};
+~~~
+
+El código anterior es de sintaxis fácil, pero entenderlo es un poco más complejo. Para entenderlos cambiemos
+el nombre de `Pila` por el de `Caja`:
+
+~~~c
+struct Caja {
+    int valor;
+    struct Caja *siguiente;
+};
+~~~
+
+Ahora queda más claro que definimos una estructura llamada `Caja`, la cual contiene un valor entero y la referencia
+a otra caja mediante un puntero de tipo `Caja` llamado `siguiente`. Entonces vamos a tener una secuencia de cajas
+relacionadas mediante punteros.
+
+El siguiente código define 3 cajas y las relaciona manualmente:
+
+~~~c
+struct Caja c1; 
+struct Caja c2; 
+struct Caja c3;
+
+c1.valor = 1;
+c2.valor = 2;
+c3.valor = 3;
+
+c1.siguiente = &c2;
+c2.siguiente = &c3;
+c3.siguiente = NULL;
+~~~
+
+Observemos que creamos tres cajas `c1`, `c2` y `c3`, luego les asignamos un valor a cada caja.
+
+Si las variables fueran declaradas como punteros debemos tener cuidado de utilizar el operador `->`, de lo contrario en lugar de hacer `c1->valor`, su equivalente sería lo siguiente: `c1->siguiente` es equivalente a `(*c1).siguiente`.
+
+Observamos que la caja `c3` no tiene ninguna caja siguiente, esto significa que nuestra pila queda más o menos
+así: [c1]->[c2]->[c3].
+
+¿Qué necesitamos hacer para insertar una nueva caja? El siguiente código crea una nueva caja y la asocia a c3.
+
+~~~c
+struct Caja c4;
+
+c4.valor = 4;
+c4.siguiente = NULL;
+
+c3.siguiente = &c4;
+~~~
+
+Observemos que ahora `c4` va a ser la caja sin caja `siguiente` y ahora la caja siguiente a `c3` es `c4`.
+
+Los mismo sería para una caja `c5` pero ahora sustituyento `c3` por `c4`.
+
+Entonces podemos generalizar este proceso llamado insertar caja. La siguiente función toma como primer
+parámetro la última caja y como segundo parámetro el valor de la nueva caja a insertar y devuelve la
+referencia a la nueva caja.
+
+~~~c
+struct Caja* insertar_caja(Caja *ultimaCaja, int valor) {
+    struct Caja *nueva_caja = (struct Caja*)malloc(sizeof(struct Caja));
+    
+    nueva_caja->valor = valor;
+    nueva_caja->siguiente = NULL;
+    
+    ultima_caja->siguiente = nueva_caja;
+    
+    return nueva_caja;
+}
+~~~
+
+El siguiente código crea una caja y le inserta más cajas consecutivamente:
+
+~~~c
+Caja cabeza;
+
+cabeza = 1;
+
+Caja *ultima_caja = &cabeza;
+
+ultima_caja = insertar_caja(ultima_caja, 2); // [1]->[2]->NULL
+
+ultima_caja = insertar_caja(ultima_caja, 5); // [1]->[2]->[5]->NULL
+
+ultima_caja = insertar_caja(ultima_caja, 8); // [1]->[2]->[5]->[8]->NULL
+
+//...
+~~~
+
+El siguiente código imprime la pila de cajas de manera similar a lo que está comentado.
+
+~~~c
+void imprimir(struct Caja *c) {
+	printf("[%d]->", c->valor);
+	
+	if (c->siguiente == NULL) {
+		printf("NULL\n");
+		return;
+	}
+	
+	imprimir(c->siguiente);
+}
+~~~
